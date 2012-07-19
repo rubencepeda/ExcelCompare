@@ -1,20 +1,11 @@
 package com.ka.excelcmp;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.*;
 
 public class ExcelCompare {
    private static final Logger LOG = LoggerFactory.getLogger(ExcelCompare.class);
@@ -62,15 +53,16 @@ public class ExcelCompare {
     
     public static void main(String[] args) throws Exception {
         LOG.debug("main - START");
-        args = new String[]{"ampster0.xlsm","ampster1.xlsm"
-        ,"--ignore1", "audit"
-        ,"--ignore2", "audit"};
+        LOG.debug("args:{}",Arrays.asList(args));
         if ((args.length < 2)){
-            System.out.println(usage());
+            LOG.info(usage());
             return;
         }
         final File file1 = new File(args[0]);
+        LOG.debug("file1: {}",file1);
+
         final File file2 = new File(args[1]);
+        LOG.debug("file2: {}",file2);
         
         Workbook wb1 = WorkbookFactory.create(file1);
         Workbook wb2 = WorkbookFactory.create(file2);
@@ -97,7 +89,7 @@ public class ExcelCompare {
             @Override
             public void reportWorkbooksDiffer(boolean differ) {
                 reportSummary();
-                System.out.println("Excel files " + file1 +" and " + file2 +" " + (differ ? "differ" : "match"));
+                LOG.info("Excel files " + file1 +" and " + file2 +" " + (differ ? "differ" : "match"));
             }
             
             @Override
@@ -108,27 +100,27 @@ public class ExcelCompare {
                     sheets2.add(c.sheet()); rows2.add(c.row()); cols2.add(c.col());
                 }
                 String wb = firstWb ? "WB1" : "WB2";
-                System.out.println("EXTRA Cell in " + wb + " " + c.cellPos() +" => '" + c.value() + "'");
+                LOG.info("EXTRA Cell in " + wb + " " + c.cellPos() +" => '" + c.value() + "'");
             }
             
             @Override
             public void reportDiffCell(CellPos c1, CellPos c2) {
                 sheets.add(c1.sheet()); rows.add(c1.row()); cols.add(c1.col());
-                System.out.println("DIFF  Cell at     " + c1.cellPos()+" => '"+ c1.value() +"' v/s '" + c2.value() + "'");
+                LOG.info("DIFF  Cell at     " + c1.cellPos()+" => '"+ c1.value() +"' v/s '" + c2.value() + "'");
             }
             
             private void reportSummary(){
                 reportS("DIFF", sheets, rows, cols);
                 reportS("EXTRA WB1", sheets1, rows1, cols1);
                 reportS("EXTRA WB2", sheets2, rows2, cols2);
-                System.out.println("-----------------------------------------");
+                LOG.info("-----------------------------------------");
             }
             
             private void reportS(String what, Set<Object> sheets, Set<Object> rows, Set<Object> cols){
-                System.out.println("----------------- "+what+" -------------------");
-                System.out.println("Sheets: " + sheets);
-                System.out.println("Rows: " + rows);
-                System.out.println("Cols: " + cols);
+                LOG.info("----------------- "+what+" -------------------");
+                LOG.info("Sheets: " + sheets);
+                LOG.info("Rows: " + rows);
+                LOG.info("Cols: " + cols);
             }
         };
         
