@@ -1,4 +1,5 @@
 package com.ka.excelcmp;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,8 +13,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExcelCompare {
+   private static final Logger LOG = LoggerFactory.getLogger(ExcelCompare.class);
 
     static String usage(){
         return    "Usage> excel_cmp <file1> <file2> [--ignore1 <sheet-ignore-spec> <sheet-ignore-spec> ..] [--ignore2 <sheet-ignore-spec> <sheet-ignore-spec> ..]" + "\n"
@@ -56,7 +60,8 @@ public class ExcelCompare {
      * TODO: Better display of results
      */
     
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        LOG.debug("main - START");
         args = new String[]{"ampster0.xlsm","ampster1.xlsm"
         ,"--ignore1", "audit"
         ,"--ignore2", "audit"};
@@ -129,6 +134,7 @@ public class ExcelCompare {
         
         boolean differ = doDiff(wi1, wi2, call);
         
+        LOG.debug("main - END");
         System.exit(differ ? 1 : 0);
     }
     
@@ -267,19 +273,15 @@ class WorkbookIterator{
     boolean ignoreSheet(){
         return (currSheetIgnores!=null) && currSheetIgnores.isWholeSheetIgnored();
     }
-    
     boolean ignoreRow(Row row){
         return (currSheetIgnores!=null) && (currSheetIgnores.isRowIgnored(row.getRowNum()));
     }
-    
     boolean ignoreCol(Cell cell){
         return (currSheetIgnores!=null) && (currSheetIgnores.isColIgnored(cell.getColumnIndex()));
     }
-    
     boolean ignoreCell(Cell cell){
         return (currSheetIgnores!=null) && (currSheetIgnores.isCellIgnored(cell.getRowIndex(), cell.getColumnIndex()));
     }
-    
     CellPos next(){
         _seenNext = false;
         return new CellPos(wb, currSheetIdx, _nextCell);
