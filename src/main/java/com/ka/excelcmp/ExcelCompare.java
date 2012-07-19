@@ -44,13 +44,7 @@ public class ExcelCompare {
                 + "excel_cmp 1.xlsx 2.xlsx --ignore1 Sheet1:::A1,B1,J10,K11,D4 Sheet2:::A1 --ignore2 Sheet1:::A1,D4,J10 Sheet3:::A1" + "\n"
                 ;
     }
-    
-    /*
-     * TODO: Provide API (callbacks)
-     * TODO: Add tests
-     * TODO: Better display of results
-     */
-    
+
     public static void main(String[] args) throws Exception {
         LOG.debug("main - START");
         LOG.debug("args:{}",Arrays.asList(args));
